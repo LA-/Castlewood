@@ -1,10 +1,10 @@
 package com.castlewood.world;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.castlewood.Castlewood;
 import com.castlewood.Constants;
@@ -15,7 +15,7 @@ import com.castlewood.world.model.entity.mob.player.Player;
 public class World extends Task
 {
 
-	private Map<Integer, Player> players = new Hashtable<>();
+	private Map<Integer, Player> players = new ConcurrentHashMap<>();
 
 	private List<Player> register = new ArrayList<>();
 
@@ -64,14 +64,31 @@ public class World extends Task
 	{
 		for (Player player : players.values())
 		{
+			if (player == null)
+			{
+				continue;
+			}
+			if (player.isDisconnected())
+			{
+				unregister(player);
+				continue;
+			}
 			player.prepare();
 		}
 		for (Player player : players.values())
 		{
+			if (player == null)
+			{
+				continue;
+			}
 			player.update();
 		}
 		for (Player player : players.values())
 		{
+			if (player == null)
+			{
+				continue;
+			}
 			player.post();
 		}
 		for (Iterator<Player> iterator = register.iterator(); iterator
@@ -80,6 +97,18 @@ public class World extends Task
 			register(iterator.next());
 			iterator.remove();
 		}
+	}
+
+	public boolean contains(Player player)
+	{
+		for (Player online : players.values())
+		{
+			if (online.getUsername().equalsIgnoreCase(player.getUsername()))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

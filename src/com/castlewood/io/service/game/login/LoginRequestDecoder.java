@@ -21,6 +21,10 @@ public class LoginRequestDecoder extends ByteToMessageDecoder<LoginRequest>
 	public LoginRequest decode(ChannelHandlerContext context, ByteBuf in)
 			throws Exception
 	{
+		if (!context.channel().isOpen())
+		{
+			return null;
+		}
 		if (state == LoginRequestDecoderState.HEADER)
 		{
 			if (in.readableBytes() >= 2)
@@ -87,6 +91,7 @@ public class LoginRequestDecoder extends ByteToMessageDecoder<LoginRequest>
 				in.skipBytes(4);
 				String username = DataBuffer.readString(in);
 				String password = DataBuffer.readString(in);
+				System.out.println(context.pipeline());
 				return new LoginRequest(username, password, decoder, encoder);
 			}
 		}

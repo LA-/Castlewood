@@ -19,9 +19,9 @@ public class LoginResponseEncoder extends MessageToByteEncoder<LoginResponse>
 			out.writeByte(message.getRights());
 			out.writeBoolean(message.isFlagged());
 		}
-		context.pipeline().remove(LoginResponseEncoder.class);
-		context.pipeline().remove(LoginRequestDecoder.class);
-		context.pipeline().remove(LoginRequestHandler.class);
+		context.channel().pipeline().remove(LoginResponseEncoder.class);
+		context.channel().pipeline().remove(LoginRequestDecoder.class);
+		context.channel().pipeline().remove(LoginRequestHandler.class);
 	}
 
 }

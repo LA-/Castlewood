@@ -13,7 +13,7 @@ public class HandshakeRequestDecoder extends ByteToMessageDecoder<Object>
 	{
 		int id = in.readUnsignedByte();
 		HandshakeRequest request = new HandshakeRequest(context, id);
-		context.pipeline().remove(this);
+		context.channel().pipeline().remove(this);
 		if (in.readable())
 		{
 			in.readBytes(in.readableBytes());

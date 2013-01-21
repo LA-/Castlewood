@@ -35,7 +35,11 @@ public class JaggrabService extends
 					public void initChannel(SocketChannel channel)
 							throws Exception
 					{
-						channel.pipeline().addLast(new JaggrabRequestDecoder(),
+						channel.pipeline().addLast(
+								JaggrabRequestDecoder.class.getSimpleName(),
+								new JaggrabRequestDecoder());
+						channel.pipeline().addLast(
+								JaggrabRequestHandler.class.getSimpleName(),
 								new JaggrabRequestHandler());
 					}
 
@@ -70,7 +74,7 @@ public class JaggrabService extends
 	@Override
 	protected void reset()
 	{
-		
+
 	}
 
 }

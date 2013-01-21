@@ -1,5 +1,8 @@
 package com.castlewood.world.model.entity.mob.player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.castlewood.Castlewood;
 import com.castlewood.Constants;
 import com.castlewood.io.event.inbound.InboundEventManager;
@@ -28,6 +31,8 @@ public class Player extends Mob
 
 	private CharacterDesign design;
 
+	private List<Player> localPlayers = new ArrayList<>();
+
 	public Player(Client client, PlayerFile file)
 	{
 		super(file.getLocation());
@@ -40,8 +45,8 @@ public class Player extends Mob
 
 	public void addAppearanceBlock()
 	{
-		AppearanceBlock block = new AppearanceBlock(design, -1, 126,
-				TextUtils.encodeBase37("Mopar"));
+		AppearanceBlock block = new AppearanceBlock(design, 0, 126,
+				TextUtils.encodeBase37(username));
 		getBlocks().add(block);
 		getMask().add(Constants.MASK_PLAYER_APPEARANCE);
 	}
@@ -55,12 +60,14 @@ public class Player extends Mob
 	@Override
 	public void register()
 	{
-
+		set("teleporting", true);
+		addAppearanceBlock();
 	}
 
 	@Override
 	public void unregister()
 	{
+		getRegion().unregister(this);
 		Castlewood.getFileManager().save(new BinaryFile(this));
 	}
 
@@ -80,7 +87,12 @@ public class Player extends Mob
 		process();
 		if (hasRegionChanged())
 		{
+			if (getRegion() != null)
+			{
+				getRegion().unregister(this);
+			}
 			setRegion(RegionManager.getForLocation(getLocation()));
+			getRegion().register(this);
 			client.send(new UpdateRegionEvent(getLocation()));
 		}
 	}
@@ -96,12 +108,18 @@ public class Player extends Mob
 	{
 		getMask().clear();
 		getBlocks().clear();
+		set("teleporting", false);
 		client.flush();
 	}
 
 	public void send(OutboundEvent event)
 	{
 		client.send(event);
+	}
+
+	public boolean isDisconnected()
+	{
+		return !client.isConnected();
 	}
 
 	public String getUsername()
@@ -124,4 +142,8 @@ public class Player extends Mob
 		return design;
 	}
 
+	public List<Player> getLocalPlayers()
+	{
+		return localPlayers;
+	}
 }

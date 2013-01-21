@@ -19,6 +19,10 @@ public class InboundPacketDecoder extends ByteToMessageDecoder<InboundPacket[]>
 	public InboundPacket[] decode(ChannelHandlerContext context, ByteBuf in)
 			throws Exception
 	{
+		if (!context.channel().isOpen())
+		{
+			return null;
+		}
 		List<InboundPacket> requests = new LinkedList<>();
 		IsaacRandom decoder = context.channel().attr(Constants.KEY_CLIENT)
 				.get().getDecoder();

@@ -14,6 +14,10 @@ public class OndemandRequestDecoder extends
 	public OndemandRequest decode(ChannelHandlerContext context, ByteBuf in)
 			throws Exception
 	{
+		if (!context.channel().isOpen())
+		{
+			return null;
+		}
 		int index = in.readUnsignedByte() + 1;
 		int archive = in.readUnsignedShort();
 		int priority = in.readUnsignedByte();

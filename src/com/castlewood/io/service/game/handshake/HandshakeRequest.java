@@ -28,13 +28,31 @@ public class HandshakeRequest
 		switch (id)
 		{
 		case Constants.SERVICE_LOGIN:
-			context.pipeline().addLast(new LoginRequestDecoder(),
-					new LoginRequestHandler(), new LoginResponseEncoder());
+			context.channel()
+					.pipeline()
+					.addLast(LoginRequestDecoder.class.getSimpleName(),
+							new LoginRequestDecoder());
+			context.channel()
+					.pipeline()
+					.addLast(LoginRequestHandler.class.getSimpleName(),
+							new LoginRequestHandler());
+			context.channel()
+					.pipeline()
+					.addLast(LoginResponseEncoder.class.getSimpleName(),
+							new LoginResponseEncoder());
 			break;
 		case Constants.SERVICE_ONDEMAND:
-			context.pipeline()
-					.addLast(new OndemandRequestDecoder(),
-							new OndemandRequestHandler(),
+			context.channel()
+					.pipeline()
+					.addLast(OndemandRequestDecoder.class.getSimpleName(),
+							new OndemandRequestDecoder());
+			context.channel()
+					.pipeline()
+					.addLast(OndemandRequestHandler.class.getSimpleName(),
+							new OndemandRequestHandler());
+			context.channel()
+					.pipeline()
+					.addLast(OndemandResponseEncoder.class.getSimpleName(),
 							new OndemandResponseEncoder());
 			break;
 		default:

@@ -12,6 +12,10 @@ public class JaggrabRequestDecoder extends ByteToMessageDecoder<JaggrabRequest>
 	public JaggrabRequest decode(ChannelHandlerContext context, ByteBuf in)
 			throws Exception
 	{
+		if (!context.channel().isOpen())
+		{
+			return null;
+		}
 		byte[] characters = Unpooled.buffer(in.readableBytes()).writeBytes(in)
 				.array();
 		String root = new String(characters);

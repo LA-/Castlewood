@@ -2,7 +2,7 @@ package com.castlewood.world.model.entity;
 
 import com.castlewood.world.model.entity.region.Region;
 
-public class Entity
+public class Entity extends AttributeMap
 {
 
 	private Location location;

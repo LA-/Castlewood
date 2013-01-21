@@ -29,4 +29,9 @@ public class Blocks
 		blocks.clear();
 	}
 
+	public boolean isUpdateRequired()
+	{
+		return !blocks.isEmpty();
+	}
+
 }

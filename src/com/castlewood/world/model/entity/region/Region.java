@@ -1,9 +1,7 @@
 package com.castlewood.world.model.entity.region;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.castlewood.world.model.entity.Entity;
 import com.castlewood.world.model.entity.Location;
@@ -14,23 +12,28 @@ public class Region extends Entity
 
 	private List<Player> players = new ArrayList<>();
 
-	private Set<Region> surrounding;
+	private List<Region> surrounding;
 
 	public Region(Location location)
 	{
 		super(location);
 	}
 
-	public void add(Player player)
+	public void register(Player player)
 	{
 		players.add(player);
 	}
 
-	public Set<Region> getSurrounding()
+	public void unregister(Player player)
+	{
+		players.remove(player);
+	}
+
+	public List<Region> getSurrounding()
 	{
 		if (surrounding == null)
 		{
-			surrounding = new HashSet<>();
+			surrounding = new ArrayList<>();
 			for (int i = -1; i <= 1; i++)
 			{
 				for (int j = -1; j <= 1; j++)

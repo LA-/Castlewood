@@ -14,8 +14,11 @@ public class JaggrabRequestHandler extends
 	public void messageReceived(ChannelHandlerContext context,
 			JaggrabRequest message) throws Exception
 	{
-		Castlewood.getServiceManager().getService(JaggrabService.class)
-				.push(new ChannelRequest<>(context.channel(), message));
+		if (context.channel().isOpen())
+		{
+			Castlewood.getServiceManager().getService(JaggrabService.class)
+					.push(new ChannelRequest<>(context.channel(), message));
+		}
 	}
 
 }

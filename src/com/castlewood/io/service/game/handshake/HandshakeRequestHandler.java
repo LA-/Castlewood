@@ -16,7 +16,7 @@ public class HandshakeRequestHandler extends
 	{
 		Castlewood.getServiceManager().getService(HandshakeService.class)
 				.push(new ChannelRequest<>(context.channel(), message));
-		context.pipeline().remove(this);
+		context.channel().pipeline().remove(this);
 	}
 
 }

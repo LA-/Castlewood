@@ -14,8 +14,12 @@ public class InboundPacketHandler extends
 	public void messageReceived(ChannelHandlerContext context,
 			InboundPacket message) throws Exception
 	{
-		Castlewood.getServiceManager().getService(InboundPacketService.class)
-				.push(new ChannelRequest<>(context.channel(), message));
+		if (context.channel().isOpen())
+		{
+			Castlewood.getServiceManager()
+					.getService(InboundPacketService.class)
+					.push(new ChannelRequest<>(context.channel(), message));
+		}
 	}
 
 }

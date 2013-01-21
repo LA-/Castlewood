@@ -31,6 +31,16 @@ public class Location
 		return deltaX <= distance && deltaY <= distance;
 	}
 
+	public int getLocalX()
+	{
+		return x - ((getRegionX() - 6) * 8);
+	}
+
+	public int getLocalY()
+	{
+		return y - ((getRegionY() - 6) * 8);
+	}
+
 	public int getRegionX()
 	{
 		return x / 8;

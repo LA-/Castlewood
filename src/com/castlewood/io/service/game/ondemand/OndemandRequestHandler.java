@@ -14,8 +14,11 @@ public class OndemandRequestHandler extends
 	public void messageReceived(ChannelHandlerContext context,
 			OndemandRequest message) throws Exception
 	{
-		Castlewood.getServiceManager().getService(OndemandService.class)
-				.push(new ChannelRequest<>(context.channel(), message));
+		if (context.channel().isOpen())
+		{
+			Castlewood.getServiceManager().getService(OndemandService.class)
+					.push(new ChannelRequest<>(context.channel(), message));
+		}
 	}
 
 }

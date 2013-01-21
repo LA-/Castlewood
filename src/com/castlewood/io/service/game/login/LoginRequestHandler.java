@@ -14,8 +14,11 @@ public class LoginRequestHandler extends
 	public void messageReceived(ChannelHandlerContext context,
 			LoginRequest message) throws Exception
 	{
-		Castlewood.getServiceManager().getService(LoginService.class)
-				.push(new ChannelRequest<>(context.channel(), message));
+		if (context.channel().isOpen())
+		{
+			Castlewood.getServiceManager().getService(LoginService.class)
+					.push(new ChannelRequest<>(context.channel(), message));
+		}
 	}
 
 }

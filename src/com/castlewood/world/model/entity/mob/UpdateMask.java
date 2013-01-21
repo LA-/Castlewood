@@ -1,6 +1,6 @@
 package com.castlewood.world.model.entity.mob;
 
-public class UpdateMask
+public class UpdateMask implements Cloneable
 {
 
 	private int mask;
@@ -38,6 +38,12 @@ public class UpdateMask
 	public void clear()
 	{
 		mask = 0;
+	}
+
+	@Override
+	public UpdateMask clone()
+	{
+		return new UpdateMask(mask);
 	}
 
 	public int getMask()

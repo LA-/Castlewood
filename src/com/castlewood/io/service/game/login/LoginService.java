@@ -8,7 +8,6 @@ import com.castlewood.Constants;
 import com.castlewood.io.file.PlayerFile;
 import com.castlewood.io.service.ChannelRequest;
 import com.castlewood.io.service.Service;
-import com.castlewood.io.service.game.RS2ChannelHandler;
 import com.castlewood.io.service.game.packet.inbound.InboundPacketDecoder;
 import com.castlewood.io.service.game.packet.inbound.InboundPacketHandler;
 import com.castlewood.io.service.game.packet.outbound.OutboundPacketEncoder;
@@ -20,6 +19,11 @@ public class LoginService extends
 {
 
 	private BlockingQueue<ChannelRequest<LoginRequest>> requests = new LinkedBlockingQueue<>();
+
+	public LoginService()
+	{
+		super(100);
+	}
 
 	@Override
 	public boolean setup()
@@ -50,24 +54,33 @@ public class LoginService extends
 		{
 			status = Constants.STATUS_INVALID_CREDENTIALS;
 		}
+		PlayerFile file = Castlewood.getFileManager().load(
+				request.getRequest().getUsername());
+		Client client = new Client(request.getChannel(), request.getRequest()
+				.getDecoder(), request.getRequest().getEncoder());
+		Player player = new Player(client, file);
+		if (Castlewood.getWorld().contains(player))
+		{
+			status = Constants.STATUS_ACCOUNT_ONLINE;
+		}
 		request.getChannel().write(new LoginResponse(status, 2, false));
 		if (status == Constants.STATUS_OK)
 		{
-			PlayerFile file = Castlewood.getFileManager().load(
-					request.getRequest().getUsername());
-			Client client = new Client(request.getChannel(), request
-					.getRequest().getDecoder(), request.getRequest()
-					.getEncoder());
-			Player player = new Player(client, file);
 			request.getChannel().attr(Constants.KEY_CLIENT).set(client);
 			request.getChannel().attr(Constants.KEY_PLAYER).set(player);
 			Castlewood.getWorld().register(player);
 			request.getChannel()
 					.pipeline()
-					.addLast(new InboundPacketDecoder(),
-							new InboundPacketHandler(),
-							new OutboundPacketEncoder(),
-							new RS2ChannelHandler());
+					.addLast(InboundPacketDecoder.class.getSimpleName(),
+							new InboundPacketDecoder());
+			request.getChannel()
+					.pipeline()
+					.addLast(InboundPacketHandler.class.getSimpleName(),
+							new InboundPacketHandler());
+			request.getChannel()
+					.pipeline()
+					.addLast(OutboundPacketEncoder.class.getSimpleName(),
+							new OutboundPacketEncoder());
 		}
 	}
 

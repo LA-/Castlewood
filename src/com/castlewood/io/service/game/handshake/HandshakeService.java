@@ -21,6 +21,11 @@ public class HandshakeService extends
 
 	private BlockingQueue<ChannelRequest<HandshakeRequest>> requests = new LinkedBlockingQueue<>();
 
+	public HandshakeService()
+	{
+		super(100);
+	}
+
 	@Override
 	public boolean setup()
 	{
@@ -35,7 +40,10 @@ public class HandshakeService extends
 							throws Exception
 					{
 						channel.pipeline().addLast(
-								new HandshakeRequestDecoder(),
+								HandshakeRequestDecoder.class.getSimpleName(),
+								new HandshakeRequestDecoder());
+						channel.pipeline().addLast(
+								HandshakeRequestHandler.class.getSimpleName(),
 								new HandshakeRequestHandler());
 					}
 

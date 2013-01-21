@@ -42,16 +42,29 @@ public class Client
 
 	public void flush()
 	{
-		OutboundPacket packet;
-		while ((packet = outbound.poll()) != null)
+		if (channel.isOpen())
 		{
-			channel.write(packet);
+			OutboundPacket packet;
+			while ((packet = outbound.poll()) != null)
+			{
+				channel.write(packet);
+			}
 		}
+	}
+
+	public void close()
+	{
+		channel.close();
 	}
 
 	public InboundPacket next()
 	{
 		return inbound.poll();
+	}
+
+	public boolean isConnected()
+	{
+		return channel.isOpen();
 	}
 
 	public IsaacRandom getDecoder()
