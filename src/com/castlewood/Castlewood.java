@@ -14,7 +14,7 @@ import com.castlewood.service.net.game.packet.inbound.InboundPacketService;
 import com.castlewood.service.net.jaggrab.JaggrabService;
 import com.castlewood.service.world.World;
 import com.castlewood.service.world.WorldService;
-import com.castlewood.task.TaskRequest;
+import com.castlewood.service.world.task.TaskRequest;
 
 public class Castlewood
 {

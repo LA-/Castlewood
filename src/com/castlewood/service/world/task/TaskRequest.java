@@ -1,4 +1,4 @@
-package com.castlewood.task;
+package com.castlewood.service.world.task;
 
 import com.castlewood.service.net.Request;
 

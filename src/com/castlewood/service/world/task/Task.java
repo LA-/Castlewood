@@ -1,4 +1,4 @@
-package com.castlewood.task;
+package com.castlewood.service.world.task;
 
 public abstract class Task
 {

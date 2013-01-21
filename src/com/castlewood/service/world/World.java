@@ -11,8 +11,8 @@ import java.util.Map;
 import com.castlewood.Castlewood;
 import com.castlewood.Constants;
 import com.castlewood.service.world.model.entity.mob.player.Player;
-import com.castlewood.task.Task;
-import com.castlewood.task.TaskRequest;
+import com.castlewood.service.world.task.Task;
+import com.castlewood.service.world.task.TaskRequest;
 
 public class World extends Task
 {

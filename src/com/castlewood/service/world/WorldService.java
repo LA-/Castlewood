@@ -3,8 +3,8 @@ package com.castlewood.service.world;
 import java.util.LinkedList;
 
 import com.castlewood.service.net.Service;
-import com.castlewood.task.Task;
-import com.castlewood.task.TaskRequest;
+import com.castlewood.service.world.task.Task;
+import com.castlewood.service.world.task.TaskRequest;
 
 public class WorldService extends Service<Task, TaskRequest>
 {
