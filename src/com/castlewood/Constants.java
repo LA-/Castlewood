@@ -5,6 +5,7 @@ import io.netty.util.AttributeKey;
 import java.math.BigInteger;
 
 import com.castlewood.world.model.entity.mob.player.Client;
+import com.castlewood.world.model.entity.mob.player.Player;
 
 public class Constants
 {
@@ -61,6 +62,9 @@ public class Constants
 
 	public static final AttributeKey<Client> KEY_CLIENT = new AttributeKey<>(
 			"Client");
+
+	public static final AttributeKey<Player> KEY_PLAYER = new AttributeKey<>(
+			"Player");
 
 	public static final byte[] PACKET_LENGTHS =
 	{

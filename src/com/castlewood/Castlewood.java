@@ -2,6 +2,9 @@ package com.castlewood;
 
 import java.io.File;
 
+import com.castlewood.io.file.PlayerFileManager;
+import com.castlewood.io.file.binary.BinaryFile;
+import com.castlewood.io.file.binary.BinaryFileManager;
 import com.castlewood.io.fs.FileStore;
 import com.castlewood.io.service.ServiceManager;
 import com.castlewood.io.service.game.handshake.HandshakeService;
@@ -19,6 +22,8 @@ public class Castlewood
 	private static ServiceManager manager = new ServiceManager(6);
 
 	private static World world = new World();
+
+	private static PlayerFileManager<BinaryFile> files = new BinaryFileManager();
 
 	public static void main(String... args)
 	{
@@ -48,6 +53,11 @@ public class Castlewood
 	public static World getWorld()
 	{
 		return world;
+	}
+
+	public static PlayerFileManager<BinaryFile> getFileManager()
+	{
+		return files;
 	}
 
 }

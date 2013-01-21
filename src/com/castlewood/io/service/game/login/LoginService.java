@@ -5,8 +5,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.castlewood.Castlewood;
 import com.castlewood.Constants;
+import com.castlewood.io.file.PlayerFile;
 import com.castlewood.io.service.ChannelRequest;
 import com.castlewood.io.service.Service;
+import com.castlewood.io.service.game.RS2ChannelHandler;
+import com.castlewood.io.service.game.packet.inbound.InboundPacketDecoder;
+import com.castlewood.io.service.game.packet.inbound.InboundPacketHandler;
+import com.castlewood.io.service.game.packet.outbound.OutboundPacketEncoder;
 import com.castlewood.world.model.entity.mob.player.Client;
 import com.castlewood.world.model.entity.mob.player.Player;
 
@@ -39,15 +44,31 @@ public class LoginService extends
 			throws Exception
 	{
 		int status = Constants.STATUS_OK;
+		if (!Castlewood.getFileManager().checkCredentials(
+				request.getRequest().getUsername(),
+				request.getRequest().getPassword()))
+		{
+			status = Constants.STATUS_INVALID_CREDENTIALS;
+		}
+		request.getChannel().write(new LoginResponse(status, 2, false));
 		if (status == Constants.STATUS_OK)
 		{
+			PlayerFile file = Castlewood.getFileManager().load(
+					request.getRequest().getUsername());
 			Client client = new Client(request.getChannel(), request
 					.getRequest().getDecoder(), request.getRequest()
 					.getEncoder());
+			Player player = new Player(client, file);
 			request.getChannel().attr(Constants.KEY_CLIENT).set(client);
-			Castlewood.getWorld().register(new Player(client));
+			request.getChannel().attr(Constants.KEY_PLAYER).set(player);
+			Castlewood.getWorld().register(player);
+			request.getChannel()
+					.pipeline()
+					.addLast(new InboundPacketDecoder(),
+							new InboundPacketHandler(),
+							new OutboundPacketEncoder(),
+							new RS2ChannelHandler());
 		}
-		request.getChannel().write(new LoginResponse(status, 2, false));
 	}
 
 	@Override

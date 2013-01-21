@@ -5,9 +5,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 import com.castlewood.Constants;
-import com.castlewood.io.service.game.packet.inbound.InboundPacketDecoder;
-import com.castlewood.io.service.game.packet.inbound.InboundPacketHandler;
-import com.castlewood.io.service.game.packet.outbound.OutboundPacketEncoder;
 
 public class LoginResponseEncoder extends MessageToByteEncoder<LoginResponse>
 {
@@ -21,8 +18,6 @@ public class LoginResponseEncoder extends MessageToByteEncoder<LoginResponse>
 		{
 			out.writeByte(message.getRights());
 			out.writeBoolean(message.isFlagged());
-			context.pipeline().addLast(new InboundPacketDecoder(),
-					new InboundPacketHandler(), new OutboundPacketEncoder());
 		}
 		context.pipeline().remove(LoginResponseEncoder.class);
 		context.pipeline().remove(LoginRequestDecoder.class);

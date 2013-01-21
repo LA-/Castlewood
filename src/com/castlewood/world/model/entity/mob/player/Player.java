@@ -1,28 +1,41 @@
 package com.castlewood.world.model.entity.mob.player;
 
+import com.castlewood.Castlewood;
 import com.castlewood.Constants;
 import com.castlewood.io.event.inbound.InboundEventManager;
 import com.castlewood.io.event.outbound.OutboundEvent;
 import com.castlewood.io.event.outbound.impl.UpdatePlayerEvent;
 import com.castlewood.io.event.outbound.impl.UpdateRegionEvent;
+import com.castlewood.io.file.PlayerFile;
+import com.castlewood.io.file.binary.BinaryFile;
 import com.castlewood.io.service.game.packet.inbound.InboundPacket;
 import com.castlewood.util.misc.TextUtils;
 import com.castlewood.world.model.entity.mob.AppearanceBlock;
 import com.castlewood.world.model.entity.mob.ChatBlock;
 import com.castlewood.world.model.entity.mob.Mob;
+import com.castlewood.world.model.entity.region.RegionManager;
 
 public class Player extends Mob
 {
 
+	private String username;
+
+	private String password;
+
 	private Client client;
 
-	private CharacterDesign design = new CharacterDesign();
+	private int rights;
 
-	public Player(Client client)
+	private CharacterDesign design;
+
+	public Player(Client client, PlayerFile file)
 	{
+		super(file.getLocation());
 		this.client = client;
-		send(new UpdateRegionEvent());
-		send(new UpdatePlayerEvent(this));
+		this.username = file.getUsername();
+		this.password = file.getPassword();
+		this.rights = file.getRights();
+		this.design = file.getDesign();
 	}
 
 	public void addAppearanceBlock()
@@ -48,7 +61,7 @@ public class Player extends Mob
 	@Override
 	public void unregister()
 	{
-
+		Castlewood.getFileManager().save(new BinaryFile(this));
 	}
 
 	@Override
@@ -61,14 +74,49 @@ public class Player extends Mob
 		}
 	}
 
+	@Override
+	public void prepare()
+	{
+		process();
+		if (hasRegionChanged())
+		{
+			setRegion(RegionManager.getForLocation(getLocation()));
+			client.send(new UpdateRegionEvent(getLocation()));
+		}
+	}
+
+	@Override
+	public void update()
+	{
+		client.send(new UpdatePlayerEvent(this));
+	}
+
+	@Override
+	public void post()
+	{
+		getMask().clear();
+		getBlocks().clear();
+		client.flush();
+	}
+
 	public void send(OutboundEvent event)
 	{
 		client.send(event);
 	}
 
-	public Client getClient()
+	public String getUsername()
 	{
-		return client;
+		return username;
+	}
+
+	public String getPassword()
+	{
+		return password;
+	}
+
+	public byte getRights()
+	{
+		return (byte) rights;
 	}
 
 	public CharacterDesign getDesign()

@@ -85,7 +85,7 @@ public class HandshakeService extends
 	@Override
 	protected void reset()
 	{
-		
+
 	}
 
 }

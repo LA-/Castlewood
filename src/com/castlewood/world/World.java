@@ -37,6 +37,13 @@ public class World extends Task
 		}
 		players.put(index, player);
 		player.setIndex(index);
+		player.register();
+	}
+
+	public void unregister(Player player)
+	{
+		player.unregister();
+		players.remove(player.getIndex());
 	}
 
 	public static void push(Task task)
@@ -57,12 +64,15 @@ public class World extends Task
 	{
 		for (Player player : players.values())
 		{
-			player.process();
+			player.prepare();
 		}
 		for (Player player : players.values())
 		{
-			player.getMask().clear();
-			player.getClient().flush();
+			player.update();
+		}
+		for (Player player : players.values())
+		{
+			player.post();
 		}
 		for (Iterator<Player> iterator = register.iterator(); iterator
 				.hasNext();)
