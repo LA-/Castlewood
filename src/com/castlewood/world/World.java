@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.castlewood.Castlewood;
 import com.castlewood.Constants;
-import com.castlewood.io.event.outbound.impl.UpdatePlayerEvent;
 import com.castlewood.task.Task;
 import com.castlewood.task.TaskRequest;
 import com.castlewood.world.model.entity.mob.player.Player;

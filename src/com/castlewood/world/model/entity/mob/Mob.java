@@ -10,6 +10,10 @@ public abstract class Mob implements Processable
 	private UpdateMask mask = new UpdateMask();
 
 	private Blocks blocks = new Blocks();
+	
+	public abstract void register();
+	
+	public abstract void unregister();
 
 	public void setIndex(int index)
 	{
