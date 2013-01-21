@@ -13,9 +13,9 @@ import java.util.Map;
 
 import com.castlewood.io.file.PlayerFileManager;
 import com.castlewood.io.file.binary.annotation.BinaryEncode;
-import com.castlewood.world.model.entity.Location;
-import com.castlewood.world.model.entity.mob.player.CharacterDesign;
-import com.castlewood.world.model.entity.mob.player.Gender;
+import com.castlewood.service.world.model.entity.Location;
+import com.castlewood.service.world.model.entity.mob.player.CharacterDesign;
+import com.castlewood.service.world.model.entity.mob.player.Gender;
 
 public class BinaryFileManager implements PlayerFileManager<BinaryFile>
 {

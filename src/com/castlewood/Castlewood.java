@@ -6,15 +6,15 @@ import com.castlewood.io.file.PlayerFileManager;
 import com.castlewood.io.file.binary.BinaryFile;
 import com.castlewood.io.file.binary.BinaryFileManager;
 import com.castlewood.io.fs.FileStore;
-import com.castlewood.io.service.ServiceManager;
-import com.castlewood.io.service.game.handshake.HandshakeService;
-import com.castlewood.io.service.game.login.LoginService;
-import com.castlewood.io.service.game.ondemand.OndemandService;
-import com.castlewood.io.service.game.packet.inbound.InboundPacketService;
-import com.castlewood.io.service.jaggrab.JaggrabService;
+import com.castlewood.service.net.ServiceManager;
+import com.castlewood.service.net.game.handshake.HandshakeService;
+import com.castlewood.service.net.game.login.LoginService;
+import com.castlewood.service.net.game.ondemand.OndemandService;
+import com.castlewood.service.net.game.packet.inbound.InboundPacketService;
+import com.castlewood.service.net.jaggrab.JaggrabService;
+import com.castlewood.service.world.World;
+import com.castlewood.service.world.WorldService;
 import com.castlewood.task.TaskRequest;
-import com.castlewood.world.World;
-import com.castlewood.world.WorldService;
 
 public class Castlewood
 {

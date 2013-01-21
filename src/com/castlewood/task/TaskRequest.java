@@ -1,6 +1,6 @@
 package com.castlewood.task;
 
-import com.castlewood.io.service.Request;
+import com.castlewood.service.net.Request;
 
 public class TaskRequest implements Request<Task>
 {

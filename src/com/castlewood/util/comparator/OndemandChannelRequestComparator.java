@@ -2,8 +2,8 @@ package com.castlewood.util.comparator;
 
 import java.util.Comparator;
 
-import com.castlewood.io.service.ChannelRequest;
-import com.castlewood.io.service.game.ondemand.OndemandRequest;
+import com.castlewood.service.net.ChannelRequest;
+import com.castlewood.service.net.game.ondemand.OndemandRequest;
 
 public class OndemandChannelRequestComparator implements
 		Comparator<ChannelRequest<OndemandRequest>>

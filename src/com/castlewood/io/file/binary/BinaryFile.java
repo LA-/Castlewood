@@ -2,10 +2,10 @@ package com.castlewood.io.file.binary;
 
 import com.castlewood.io.file.PlayerFile;
 import com.castlewood.io.file.binary.annotation.BinaryEncode;
-import com.castlewood.world.model.entity.Location;
-import com.castlewood.world.model.entity.mob.player.CharacterDesign;
-import com.castlewood.world.model.entity.mob.player.Gender;
-import com.castlewood.world.model.entity.mob.player.Player;
+import com.castlewood.service.world.model.entity.Location;
+import com.castlewood.service.world.model.entity.mob.player.CharacterDesign;
+import com.castlewood.service.world.model.entity.mob.player.Gender;
+import com.castlewood.service.world.model.entity.mob.player.Player;
 
 public class BinaryFile implements PlayerFile
 {

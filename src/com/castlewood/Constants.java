@@ -4,8 +4,8 @@ import io.netty.util.AttributeKey;
 
 import java.math.BigInteger;
 
-import com.castlewood.world.model.entity.mob.player.Client;
-import com.castlewood.world.model.entity.mob.player.Player;
+import com.castlewood.service.world.model.entity.mob.player.Client;
+import com.castlewood.service.world.model.entity.mob.player.Player;
 
 public class Constants
 {
