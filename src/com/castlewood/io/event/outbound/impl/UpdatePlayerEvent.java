@@ -78,7 +78,7 @@ public class UpdatePlayerEvent implements OutboundEvent
 				{
 					added++;
 					addPlayer(player, other, packet);
-					if (other.getMask().has(Constants.MASK_PLAYER_APPEARANCE))
+					if (!other.getMask().has(Constants.MASK_PLAYER_APPEARANCE))
 					{
 						other.addAppearanceBlock();
 					}
@@ -91,8 +91,7 @@ public class UpdatePlayerEvent implements OutboundEvent
 		{
 			packet.writeBits(11, 2047);
 			packet.switchByte();
-			packet.getBuffer().writeBytes(block.getBuffer(), 0,
-					block.getBuffer().writerIndex());
+			packet.getBuffer().writeBytes(block.getBuffer());
 		}
 		else
 		{
@@ -105,7 +104,7 @@ public class UpdatePlayerEvent implements OutboundEvent
 			OutboundPacket packet)
 	{
 		packet.writeBits(11, other.getIndex());
-		packet.writeBits(1, player.getBlocks().isUpdateRequired() ? 1 : 0);
+		packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
 		packet.writeBits(1, 1);
 		packet.writeBits(5, other.getLocation().getY()
 				- player.getLocation().getY());
@@ -122,11 +121,11 @@ public class UpdatePlayerEvent implements OutboundEvent
 			packet.writeBits(2, 3);
 			packet.writeBits(2, player.getLocation().getHeight());
 			packet.writeBits(1, 1);
-			packet.writeBits(1, player.getBlocks().isUpdateRequired() ? 1 : 0);
+			packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
 			packet.writeBits(7, player.getLocation().getLocalY());
 			packet.writeBits(7, player.getLocation().getLocalX());
 		}
-		else if (player.getBlocks().isUpdateRequired())
+		else if (player.isUpdateRequired())
 		{
 			packet.writeBits(1, 1);
 			packet.writeBits(2, 0);
@@ -140,7 +139,7 @@ public class UpdatePlayerEvent implements OutboundEvent
 	private static void updateBlocks(Player updating, Player player,
 			OutboundPacket packet)
 	{
-		if (player.getBlocks().isUpdateRequired())
+		if (player.isUpdateRequired())
 		{
 			UpdateMask mask = player.getMask().clone();
 			if (updating == player)
@@ -228,6 +227,6 @@ public class UpdatePlayerEvent implements OutboundEvent
 		properties.writeByte(block.getCombat());
 		properties.writeShort(0);
 		packet.getBuffer().writeByte(properties.writerIndex());
-		packet.getBuffer().writeBytes(properties, 0, properties.writerIndex());
+		packet.getBuffer().writeBytes(properties);
 	}
 }

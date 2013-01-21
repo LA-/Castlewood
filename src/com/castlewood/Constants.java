@@ -10,7 +10,7 @@ import com.castlewood.world.model.entity.mob.player.Player;
 public class Constants
 {
 
-	public static final boolean ENABLE_RSA = true;
+	public static final boolean ENABLE_RSA = false;
 
 	public static final byte ARCHIVE_META_SIZE = 6;
 

@@ -122,6 +122,11 @@ public class Player extends Mob
 		return !client.isConnected();
 	}
 
+	public boolean isUpdateRequired()
+	{
+		return getMask().getMask() != 0;
+	}
+
 	public String getUsername()
 	{
 		return username;

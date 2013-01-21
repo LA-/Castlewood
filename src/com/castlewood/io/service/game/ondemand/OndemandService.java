@@ -17,11 +17,6 @@ public class OndemandService extends
 	private BlockingQueue<ChannelRequest<OndemandRequest>> requests = new PriorityBlockingQueue<>(
 			1, new OndemandChannelRequestComparator());
 
-	public OndemandService()
-	{
-		super(100);
-	}
-
 	@Override
 	public boolean setup()
 	{

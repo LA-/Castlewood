@@ -1,12 +1,12 @@
 package com.castlewood.world.model.entity;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class AttributeMap
 {
 
-	private Map<String, Object> attributes = new HashMap<>();
+	private Map<String, Object> attributes = new LinkedHashMap<>();
 
 	public void set(String attribute, Object value)
 	{

@@ -23,36 +23,49 @@ public class HandshakeRequest
 		this.id = id;
 	}
 
-	public void transform()
+	public void addDecoders()
 	{
 		switch (id)
 		{
 		case Constants.SERVICE_LOGIN:
 			context.channel()
 					.pipeline()
-					.addLast(LoginRequestDecoder.class.getSimpleName(),
-							new LoginRequestDecoder());
-			context.channel()
-					.pipeline()
-					.addLast(LoginRequestHandler.class.getSimpleName(),
+					.addFirst(LoginRequestHandler.class.getSimpleName(),
 							new LoginRequestHandler());
 			context.channel()
 					.pipeline()
-					.addLast(LoginResponseEncoder.class.getSimpleName(),
+					.addFirst(LoginRequestDecoder.class.getSimpleName(),
+							new LoginRequestDecoder());
+			break;
+		case Constants.SERVICE_ONDEMAND:
+			context.channel()
+					.pipeline()
+					.addFirst(OndemandRequestHandler.class.getSimpleName(),
+							new OndemandRequestHandler());
+			context.channel()
+					.pipeline()
+					.addFirst(OndemandRequestDecoder.class.getSimpleName(),
+							new OndemandRequestDecoder());
+			break;
+		default:
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	public void addEncoder()
+	{
+		switch (id)
+		{
+		case Constants.SERVICE_LOGIN:
+			context.channel()
+					.pipeline()
+					.addFirst(LoginResponseEncoder.class.getSimpleName(),
 							new LoginResponseEncoder());
 			break;
 		case Constants.SERVICE_ONDEMAND:
 			context.channel()
 					.pipeline()
-					.addLast(OndemandRequestDecoder.class.getSimpleName(),
-							new OndemandRequestDecoder());
-			context.channel()
-					.pipeline()
-					.addLast(OndemandRequestHandler.class.getSimpleName(),
-							new OndemandRequestHandler());
-			context.channel()
-					.pipeline()
-					.addLast(OndemandResponseEncoder.class.getSimpleName(),
+					.addFirst(OndemandResponseEncoder.class.getSimpleName(),
 							new OndemandResponseEncoder());
 			break;
 		default:

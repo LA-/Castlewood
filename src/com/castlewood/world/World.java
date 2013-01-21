@@ -2,6 +2,7 @@ package com.castlewood.world;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +17,8 @@ public class World extends Task
 {
 
 	private Map<Integer, Player> players = new ConcurrentHashMap<>();
+
+	private Map<String, Integer> usernameToIndex = new LinkedHashMap<>();
 
 	private List<Player> register = new ArrayList<>();
 
@@ -36,6 +39,7 @@ public class World extends Task
 			}
 		}
 		players.put(index, player);
+		usernameToIndex.put(player.getUsername(), index);
 		player.setIndex(index);
 		player.register();
 	}
@@ -44,6 +48,7 @@ public class World extends Task
 	{
 		player.unregister();
 		players.remove(player.getIndex());
+		usernameToIndex.remove(player.getUsername());
 	}
 
 	public static void push(Task task)
@@ -62,6 +67,7 @@ public class World extends Task
 	@Override
 	public void execute()
 	{
+		long start = System.nanoTime();
 		for (Player player : players.values())
 		{
 			if (player == null)
@@ -97,18 +103,19 @@ public class World extends Task
 			register(iterator.next());
 			iterator.remove();
 		}
+		long elapsed = System.nanoTime() - start;
+		System.out.println("Nanoseconds : " + elapsed + " (" + elapsed
+				/ 1000000D + " ms) Player: " + players.size());
+	}
+
+	public boolean contains(String username)
+	{
+		return usernameToIndex.get(username) != null;
 	}
 
 	public boolean contains(Player player)
 	{
-		for (Player online : players.values())
-		{
-			if (online.getUsername().equalsIgnoreCase(player.getUsername()))
-			{
-				return true;
-			}
-		}
-		return false;
+		return contains(player.getUsername());
 	}
 
 }

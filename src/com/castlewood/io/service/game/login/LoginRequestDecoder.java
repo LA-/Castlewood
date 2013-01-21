@@ -91,7 +91,6 @@ public class LoginRequestDecoder extends ByteToMessageDecoder<LoginRequest>
 				in.skipBytes(4);
 				String username = DataBuffer.readString(in);
 				String password = DataBuffer.readString(in);
-				System.out.println(context.pipeline());
 				return new LoginRequest(username, password, decoder, encoder);
 			}
 		}

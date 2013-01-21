@@ -22,7 +22,7 @@ public class LoginService extends
 
 	public LoginService()
 	{
-		super(100);
+		super(600);
 	}
 
 	@Override
@@ -54,33 +54,34 @@ public class LoginService extends
 		{
 			status = Constants.STATUS_INVALID_CREDENTIALS;
 		}
-		PlayerFile file = Castlewood.getFileManager().load(
-				request.getRequest().getUsername());
-		Client client = new Client(request.getChannel(), request.getRequest()
-				.getDecoder(), request.getRequest().getEncoder());
-		Player player = new Player(client, file);
-		if (Castlewood.getWorld().contains(player))
+		if (Castlewood.getWorld().contains(request.getRequest().getUsername()))
 		{
 			status = Constants.STATUS_ACCOUNT_ONLINE;
 		}
 		request.getChannel().write(new LoginResponse(status, 2, false));
 		if (status == Constants.STATUS_OK)
 		{
+			PlayerFile file = Castlewood.getFileManager().load(
+					request.getRequest().getUsername());
+			Client client = new Client(request.getChannel(), request
+					.getRequest().getDecoder(), request.getRequest()
+					.getEncoder());
+			Player player = new Player(client, file);
 			request.getChannel().attr(Constants.KEY_CLIENT).set(client);
 			request.getChannel().attr(Constants.KEY_PLAYER).set(player);
 			Castlewood.getWorld().register(player);
 			request.getChannel()
 					.pipeline()
-					.addLast(InboundPacketDecoder.class.getSimpleName(),
-							new InboundPacketDecoder());
+					.addFirst(OutboundPacketEncoder.class.getSimpleName(),
+							new OutboundPacketEncoder());
 			request.getChannel()
 					.pipeline()
-					.addLast(InboundPacketHandler.class.getSimpleName(),
+					.addFirst(InboundPacketHandler.class.getSimpleName(),
 							new InboundPacketHandler());
 			request.getChannel()
 					.pipeline()
-					.addLast(OutboundPacketEncoder.class.getSimpleName(),
-							new OutboundPacketEncoder());
+					.addFirst(InboundPacketDecoder.class.getSimpleName(),
+							new InboundPacketDecoder());
 		}
 	}
 

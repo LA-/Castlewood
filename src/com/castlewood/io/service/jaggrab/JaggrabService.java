@@ -35,12 +35,12 @@ public class JaggrabService extends
 					public void initChannel(SocketChannel channel)
 							throws Exception
 					{
-						channel.pipeline().addLast(
-								JaggrabRequestDecoder.class.getSimpleName(),
-								new JaggrabRequestDecoder());
-						channel.pipeline().addLast(
+						channel.pipeline().addFirst(
 								JaggrabRequestHandler.class.getSimpleName(),
 								new JaggrabRequestHandler());
+						channel.pipeline().addFirst(
+								JaggrabRequestDecoder.class.getSimpleName(),
+								new JaggrabRequestDecoder());
 					}
 
 				}).bind().syncUninterruptibly().isSuccess())

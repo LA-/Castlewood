@@ -4,6 +4,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -14,6 +15,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.castlewood.Constants;
 import com.castlewood.io.service.ChannelRequest;
 import com.castlewood.io.service.Service;
+import com.castlewood.io.service.game.login.LoginRequestDecoder;
+import com.castlewood.io.service.game.login.LoginRequestHandler;
 
 public class HandshakeService extends
 		Service<HandshakeRequest, ChannelRequest<HandshakeRequest>>
@@ -21,17 +24,13 @@ public class HandshakeService extends
 
 	private BlockingQueue<ChannelRequest<HandshakeRequest>> requests = new LinkedBlockingQueue<>();
 
-	public HandshakeService()
-	{
-		super(100);
-	}
-
 	@Override
 	public boolean setup()
 	{
 		if (new ServerBootstrap().localAddress(Constants.PORT_GAME)
 				.channel(NioServerSocketChannel.class)
 				.group(new NioEventLoopGroup())
+				.childOption(ChannelOption.TCP_NODELAY, true)
 				.childHandler(new ChannelInitializer<SocketChannel>()
 				{
 
@@ -39,12 +38,12 @@ public class HandshakeService extends
 					public void initChannel(SocketChannel channel)
 							throws Exception
 					{
-						channel.pipeline().addLast(
-								HandshakeRequestDecoder.class.getSimpleName(),
-								new HandshakeRequestDecoder());
-						channel.pipeline().addLast(
+						channel.pipeline().addFirst(
 								HandshakeRequestHandler.class.getSimpleName(),
 								new HandshakeRequestHandler());
+						channel.pipeline().addFirst(
+								HandshakeRequestDecoder.class.getSimpleName(),
+								new HandshakeRequestDecoder());
 					}
 
 				}).bind().syncUninterruptibly().isSuccess())
@@ -71,23 +70,29 @@ public class HandshakeService extends
 			throws Exception
 	{
 		ByteBuf buffer;
-		switch (request.getRequest().getId())
+		request.getRequest().addDecoders();
+		if (request.getChannel().pipeline().get(LoginRequestDecoder.class) != null
+				&& request.getChannel().pipeline()
+						.get(LoginRequestHandler.class) != null)
 		{
-		case Constants.SERVICE_LOGIN:
-			buffer = Unpooled.buffer(17);
-			buffer.writeByte(Constants.STATUS_EXCHANGE_DATA);
-			buffer.writeLong(0);
-			buffer.writeLong(0);
-			break;
-		case Constants.SERVICE_ONDEMAND:
-			buffer = Unpooled.buffer(8);
-			buffer.writeLong(Constants.STATUS_EXCHANGE_DATA);
-			break;
-		default:
-			throw new UnsupportedOperationException();
+			switch (request.getRequest().getId())
+			{
+			case Constants.SERVICE_LOGIN:
+				buffer = Unpooled.buffer(17);
+				buffer.writeByte(Constants.STATUS_EXCHANGE_DATA);
+				buffer.writeLong(0);
+				buffer.writeLong(0);
+				break;
+			case Constants.SERVICE_ONDEMAND:
+				buffer = Unpooled.buffer(8);
+				buffer.writeLong(Constants.STATUS_EXCHANGE_DATA);
+				break;
+			default:
+				throw new UnsupportedOperationException();
+			}
+			request.getChannel().write(buffer);
+			request.getRequest().addEncoder();
 		}
-		request.getChannel().write(buffer);
-		request.getRequest().transform();
 	}
 
 	@Override
