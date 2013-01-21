@@ -2,8 +2,9 @@ package com.castlewood.world.model.entity;
 
 import com.castlewood.io.file.binary.Binary;
 import com.castlewood.io.file.binary.annotation.BinaryEncode;
+import com.castlewood.world.model.entity.mob.Direction;
 
-public class Location
+public class Location implements Cloneable
 {
 
 	private int x;
@@ -16,12 +17,58 @@ public class Location
 	{
 		this(x, y, 0);
 	}
-	
+
 	public Location(int x, int y, int height)
 	{
 		this.x = x;
 		this.y = y;
 		this.height = height;
+	}
+
+	public void translate(int x, int y)
+	{
+		this.x += x;
+		this.y += y;
+	}
+
+	public void translate(Direction direction)
+	{
+		int x = 0;
+		int y = 0;
+		switch (direction)
+		{
+		case NORTH_WEST:
+			x--;
+			y++;
+			break;
+		case NORTH_EAST:
+			x++;
+			y++;
+			break;
+		case NORTH:
+			y++;
+			break;
+		case EAST:
+			x++;
+			break;
+		case SOUTH_WEST:
+			x--;
+			y--;
+			break;
+		case SOUTH_EAST:
+			x++;
+			y--;
+			break;
+		case SOUTH:
+			y--;
+			break;
+		case WEST:
+			x--;
+			break;
+		default:
+			break;
+		}
+		translate(x, y);
 	}
 
 	public boolean withinDistance(Location location)
@@ -72,6 +119,12 @@ public class Location
 	public byte getHeight()
 	{
 		return (byte) height;
+	}
+
+	@Override
+	public Location clone()
+	{
+		return new Location(x, y, height);
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import com.castlewood.io.service.game.packet.outbound.OutboundPacket;
 import com.castlewood.io.service.game.packet.outbound.OutboundPacketHeader;
 import com.castlewood.world.model.entity.mob.AppearanceBlock;
 import com.castlewood.world.model.entity.mob.ChatBlock;
+import com.castlewood.world.model.entity.mob.Direction;
 import com.castlewood.world.model.entity.mob.UpdateMask;
 import com.castlewood.world.model.entity.mob.player.Player;
 import com.castlewood.world.model.entity.region.Region;
@@ -125,6 +126,24 @@ public class UpdatePlayerEvent implements OutboundEvent
 			packet.writeBits(7, player.getLocation().getLocalY());
 			packet.writeBits(7, player.getLocation().getLocalX());
 		}
+		else if (player.movementRequired())
+		{
+			if (player.getRunningDirection() != Direction.NONE)
+			{
+				packet.writeBits(1, 1);
+				packet.writeBits(2, 2);
+				packet.writeBits(3, player.getWalkingDirection().getValue());
+				packet.writeBits(3, player.getRunningDirection().getValue());
+				packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
+			}
+			else
+			{
+				packet.writeBits(1, 1);
+				packet.writeBits(2, 1);
+				packet.writeBits(3, player.getWalkingDirection().getValue());
+				packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
+			}
+		}
 		else if (player.isUpdateRequired())
 		{
 			packet.writeBits(1, 1);
@@ -188,7 +207,7 @@ public class UpdatePlayerEvent implements OutboundEvent
 		int[] colour = block.getDesign().getColour();
 		int[] movement =
 		{
-				0x328, 0x337, 0x334, 0x335, 0x336, 0x333, 0x338
+				0x328, 0x337, 0x333, 0x334, 0x335, 0x336, 0x338
 		};
 		properties.writeByte(block.getDesign().getGender().ordinal());
 		properties.writeByte(block.getOverhead());

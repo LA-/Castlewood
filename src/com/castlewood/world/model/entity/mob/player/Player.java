@@ -85,6 +85,7 @@ public class Player extends Mob
 	public void prepare()
 	{
 		process();
+		advance();
 		if (hasRegionChanged())
 		{
 			if (getRegion() != null)
@@ -109,6 +110,7 @@ public class Player extends Mob
 		getMask().clear();
 		getBlocks().clear();
 		set("teleporting", false);
+		resetDirections();
 		client.flush();
 	}
 
