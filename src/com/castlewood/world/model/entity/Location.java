@@ -12,6 +12,11 @@ public class Location
 
 	private int height;
 
+	public Location(int x, int y)
+	{
+		this(x, y, 0);
+	}
+	
 	public Location(int x, int y, int height)
 	{
 		this.x = x;
@@ -97,6 +102,12 @@ public class Location
 		if (y != other.y)
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Location [x=" + x + ", y=" + y + ", height=" + height + "]";
 	}
 
 }

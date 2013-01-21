@@ -18,6 +18,14 @@ public class InboundPacket
 		this.buffer = buffer;
 	}
 
+	public void readBytesReversed(byte[] destination, int length)
+	{
+		for (int i = length - 1; i >= 0; i--)
+		{
+			destination[i] = buffer.readByte();
+		}
+	}
+
 	public int getId()
 	{
 		return id;

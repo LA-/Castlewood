@@ -1,18 +1,21 @@
 package com.castlewood.io.event.inbound.impl;
 
+import com.castlewood.Constants;
 import com.castlewood.io.event.inbound.InboundEvent;
-import com.castlewood.io.event.outbound.impl.SendMessageEvent;
 import com.castlewood.io.service.game.packet.inbound.InboundPacket;
 import com.castlewood.world.model.entity.mob.player.Player;
 
-public class UnhandledEvent implements InboundEvent
+public class RegionChangedEvent implements InboundEvent
 {
 
 	@Override
 	public void decode(Player player, InboundPacket packet)
 	{
-		player.send(new SendMessageEvent("Unhandled packet " + packet.getId() + ", "
-				+ packet.getLength()));
+		int anti = packet.getBuffer().readInt();
+		if (anti != Constants.ANTI_RANDOM)
+		{
+			player.disconnect();
+		}
 	}
 
 }

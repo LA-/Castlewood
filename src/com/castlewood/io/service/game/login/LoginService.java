@@ -58,11 +58,12 @@ public class LoginService extends
 		{
 			status = Constants.STATUS_ACCOUNT_ONLINE;
 		}
-		request.getChannel().write(new LoginResponse(status, 2, false));
+		PlayerFile file = Castlewood.getFileManager().load(
+				request.getRequest().getUsername());
+		request.getChannel().write(
+				new LoginResponse(status, file.getRights(), false));
 		if (status == Constants.STATUS_OK)
 		{
-			PlayerFile file = Castlewood.getFileManager().load(
-					request.getRequest().getUsername());
 			Client client = new Client(request.getChannel(), request
 					.getRequest().getDecoder(), request.getRequest()
 					.getEncoder());

@@ -39,7 +39,8 @@ public class OutboundPacket
 
 	public void writeBits(int amount, int value)
 	{
-		if (!buffer.hasArray()) {
+		if (!buffer.hasArray())
+		{
 			System.out.println("Error");
 		}
 		int position = index >> 3;

@@ -9,11 +9,14 @@ public class ChatBlock implements Block
 
 	private byte[] message;
 
-	public ChatBlock(int effect, int colour, byte[] message)
+	private int rights;
+
+	public ChatBlock(int effect, int colour, byte[] message, int rights)
 	{
 		this.effect = effect;
 		this.colour = colour;
 		this.message = message;
+		this.rights = rights;
 	}
 
 	public int getEffect()
@@ -31,4 +34,9 @@ public class ChatBlock implements Block
 		return message;
 	}
 
+	public int getRights()
+	{
+		return rights;
+	}
+	
 }

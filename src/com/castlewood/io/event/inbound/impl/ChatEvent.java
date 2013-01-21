@@ -15,8 +15,8 @@ public class ChatEvent implements InboundEvent
 		int colour = packet.getBuffer().readUnsignedByte();
 		int length = packet.getLength() - 2;
 		byte[] message = new byte[length];
-		packet.getBuffer().readBytes(message);
-		player.add(new ChatBlock(effect, colour, message));
+		packet.readBytesReversed(message, length);
+		player.add(new ChatBlock(effect, colour, message, player.getRights()));
 	}
 
 }

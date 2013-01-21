@@ -1,11 +1,12 @@
 package com.castlewood.world;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.castlewood.Castlewood;
 import com.castlewood.Constants;
@@ -16,7 +17,7 @@ import com.castlewood.world.model.entity.mob.player.Player;
 public class World extends Task
 {
 
-	private Map<Integer, Player> players = new ConcurrentHashMap<>();
+	private Map<Integer, Player> players = new Hashtable<>();
 
 	private Map<String, Integer> usernameToIndex = new LinkedHashMap<>();
 
@@ -67,13 +68,10 @@ public class World extends Task
 	@Override
 	public void execute()
 	{
-		long start = System.nanoTime();
+		Map<Integer, Player> players = Collections
+				.unmodifiableMap(this.players);
 		for (Player player : players.values())
 		{
-			if (player == null)
-			{
-				continue;
-			}
 			if (player.isDisconnected())
 			{
 				unregister(player);
@@ -83,18 +81,10 @@ public class World extends Task
 		}
 		for (Player player : players.values())
 		{
-			if (player == null)
-			{
-				continue;
-			}
 			player.update();
 		}
 		for (Player player : players.values())
 		{
-			if (player == null)
-			{
-				continue;
-			}
 			player.post();
 		}
 		for (Iterator<Player> iterator = register.iterator(); iterator
@@ -103,19 +93,11 @@ public class World extends Task
 			register(iterator.next());
 			iterator.remove();
 		}
-		long elapsed = System.nanoTime() - start;
-		System.out.println("Nanoseconds : " + elapsed + " (" + elapsed
-				/ 1000000D + " ms) Player: " + players.size());
 	}
 
 	public boolean contains(String username)
 	{
 		return usernameToIndex.get(username) != null;
-	}
-
-	public boolean contains(Player player)
-	{
-		return contains(player.getUsername());
 	}
 
 }

@@ -10,7 +10,7 @@ import com.castlewood.world.model.entity.mob.player.Player;
 public class Constants
 {
 
-	public static final boolean ENABLE_RSA = false;
+	public static final boolean ENABLE_RSA = true;
 
 	public static final byte ARCHIVE_META_SIZE = 6;
 
@@ -48,6 +48,8 @@ public class Constants
 			MASK_PLAYER_APPEARANCE = 0x10, MASK_PLAYER_FIRST_HIT = 0x20,
 			MASK_PLAYER_CHAT = 0x80, MASK_PLAYER_GRAPHICS = 0x100,
 			MASK_PLAYER_SECOND_HIT = 0x200, MASK_PLAYER_FORCE_MOVEMENT = 0x400;
+	
+	public static final int ANTI_RANDOM = (int) (Math.random() * 999999);
 
 	public static final String CACHE_PATH = ".castlewood_file_store_32";
 

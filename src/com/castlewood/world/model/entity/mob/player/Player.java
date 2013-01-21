@@ -117,6 +117,11 @@ public class Player extends Mob
 		client.send(event);
 	}
 
+	public void disconnect()
+	{
+		client.close();
+	}
+
 	public boolean isDisconnected()
 	{
 		return !client.isConnected();

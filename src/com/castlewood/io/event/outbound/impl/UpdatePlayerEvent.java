@@ -40,7 +40,7 @@ public class UpdatePlayerEvent implements OutboundEvent
 				.hasNext();)
 		{
 			Player other = iterator.next();
-			if (Castlewood.getWorld().contains(other)
+			if (Castlewood.getWorld().contains(other.getUsername())
 					&& player.getLocation().withinDistance(other.getLocation()))
 			{
 				updatePlayerMovement(player, other, packet);
@@ -174,7 +174,7 @@ public class UpdatePlayerEvent implements OutboundEvent
 	{
 		packet.getBuffer().writeShort(
 				(block.getColour() << 8) + block.getEffect());
-		packet.getBuffer().writeByte(0);
+		packet.getBuffer().writeByte(block.getRights());
 		packet.getBuffer().writeByte(block.getMessage().length);
 		packet.getBuffer().writeBytes(block.getMessage());
 	}
