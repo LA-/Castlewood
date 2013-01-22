@@ -10,8 +10,10 @@ public class CameraMovementEvent implements InboundEvent
 	@Override
 	public void decode(Player player, InboundPacket packet)
 	{
-		int x = packet.getBuffer().readShort();
-		int y = packet.getBuffer().readShort();
+		/*
+		 * int x = packet.getBuffer().readShort(); int y =
+		 * packet.getBuffer().readShort();
+		 */
 	}
 
 }

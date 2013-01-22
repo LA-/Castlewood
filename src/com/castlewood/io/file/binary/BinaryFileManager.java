@@ -16,12 +16,14 @@ import com.castlewood.io.file.binary.annotation.BinaryEncode;
 import com.castlewood.service.world.model.entity.Location;
 import com.castlewood.service.world.model.entity.mob.player.CharacterDesign;
 import com.castlewood.service.world.model.entity.mob.player.Gender;
+import com.castlewood.service.world.model.entity.mob.player.PrivacySettings;
 
 public class BinaryFileManager implements PlayerFileManager<BinaryFile>
 {
 
 	public static final byte OPCODE_USERNAME = 1, OPCODE_PASSWORD = 2,
-			OPCODE_RIGHTS = 3, OPCODE_LOCATION = 4, OPCODE_DESIGN = 5;
+			OPCODE_RIGHTS = 3, OPCODE_LOCATION = 4, OPCODE_DESIGN = 5,
+			OPCODE_SETTINGS = 6;
 
 	private static Map<String, BinaryFile> files = new Hashtable<>();
 
@@ -114,6 +116,31 @@ public class BinaryFileManager implements PlayerFileManager<BinaryFile>
 					CharacterDesign design = new CharacterDesign(gender, style,
 							colour);
 					profile.setDesign(design);
+					break;
+				case OPCODE_SETTINGS:
+					byte privateSetting = -1;
+					byte publicSetting = -1;
+					byte tradeSetting = -1;
+					while (privateSetting == -1 || publicSetting == -1
+							|| tradeSetting == -1)
+					{
+						opcode = stream.readByte();
+						switch (opcode)
+						{
+						case 1:
+							privateSetting = stream.readByte();
+							break;
+						case 2:
+							publicSetting = stream.readByte();
+							break;
+						case 3:
+							tradeSetting = stream.readByte();
+							break;
+						}
+					}
+					PrivacySettings settings = new PrivacySettings(
+							privateSetting, publicSetting, tradeSetting);
+					profile.setSettings(settings);
 					break;
 				}
 			}

@@ -6,6 +6,7 @@ import com.castlewood.service.world.model.entity.Location;
 import com.castlewood.service.world.model.entity.mob.player.CharacterDesign;
 import com.castlewood.service.world.model.entity.mob.player.Gender;
 import com.castlewood.service.world.model.entity.mob.player.Player;
+import com.castlewood.service.world.model.entity.mob.player.PrivacySettings;
 
 public class BinaryFile implements PlayerFile
 {
@@ -26,6 +27,8 @@ public class BinaryFile implements PlayerFile
 			0, 0, 0, 0, 0
 	});
 
+	private PrivacySettings settings = new PrivacySettings(0, 0, 0);
+
 	public BinaryFile(Player player)
 	{
 		this.username = player.getUsername();
@@ -33,6 +36,7 @@ public class BinaryFile implements PlayerFile
 		this.rights = player.getRights();
 		this.location = player.getLocation();
 		this.design = player.getDesign();
+		this.settings = player.getSettings();
 	}
 
 	public BinaryFile()
@@ -63,6 +67,11 @@ public class BinaryFile implements PlayerFile
 	public void setDesign(CharacterDesign design)
 	{
 		this.design = design;
+	}
+
+	public void setSettings(PrivacySettings settings)
+	{
+		this.settings = settings;
 	}
 
 	@Override
@@ -98,6 +107,13 @@ public class BinaryFile implements PlayerFile
 	public CharacterDesign getDesign()
 	{
 		return design;
+	}
+
+	@Override
+	@BinaryEncode(opcode = BinaryFileManager.OPCODE_SETTINGS, type = Binary.OBJECT)
+	public PrivacySettings getSettings()
+	{
+		return settings;
 	}
 
 }

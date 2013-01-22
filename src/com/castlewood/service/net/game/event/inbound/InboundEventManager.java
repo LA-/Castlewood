@@ -9,7 +9,7 @@ import com.castlewood.service.net.game.event.inbound.impl.ChatEvent;
 import com.castlewood.service.net.game.event.inbound.impl.CommandEvent;
 import com.castlewood.service.net.game.event.inbound.impl.FocusChangedEvent;
 import com.castlewood.service.net.game.event.inbound.impl.IdleEvent;
-import com.castlewood.service.net.game.event.inbound.impl.InteractionSettingsChangedEvent;
+import com.castlewood.service.net.game.event.inbound.impl.PrivateSettingsChangedEvent;
 import com.castlewood.service.net.game.event.inbound.impl.KeepAliveEvent;
 import com.castlewood.service.net.game.event.inbound.impl.MouseClickEvent;
 import com.castlewood.service.net.game.event.inbound.impl.MovementEvent;
@@ -32,7 +32,7 @@ public class InboundEventManager
 		events.put(3, new FocusChangedEvent());
 		events.put(4, new ChatEvent());
 		events.put(86, new CameraMovementEvent());
-		events.put(95, new InteractionSettingsChangedEvent());
+		events.put(95, new PrivateSettingsChangedEvent());
 		events.put(98, new MovementEvent());
 		events.put(103, new CommandEvent());
 		events.put(121, new RegionLoadedEvent());

@@ -10,7 +10,7 @@ public class FocusChangedEvent implements InboundEvent
 	@Override
 	public void decode(Player player, InboundPacket packet)
 	{
-		boolean focused = packet.getBuffer().readBoolean();
+		/* boolean focused = packet.getBuffer().readBoolean(); */
 	}
 
 }

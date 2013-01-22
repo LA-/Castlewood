@@ -41,6 +41,8 @@ public class Player extends Mob
 
 	private CharacterDesign design;
 
+	private PrivacySettings settings;
+
 	private List<Player> localPlayers = new ArrayList<>();
 
 	public Player(Client client, PlayerFile file)
@@ -51,6 +53,7 @@ public class Player extends Mob
 		this.password = file.getPassword();
 		this.rights = file.getRights();
 		this.design = file.getDesign();
+		this.settings = file.getSettings();
 	}
 
 	public void addAppearanceBlock()
@@ -173,8 +176,14 @@ public class Player extends Mob
 		return design;
 	}
 
+	public PrivacySettings getSettings()
+	{
+		return settings;
+	}
+
 	public List<Player> getLocalPlayers()
 	{
 		return localPlayers;
 	}
+
 }
