@@ -30,22 +30,25 @@ public class UpdatePlayerEvent implements OutboundEvent
 	@Override
 	public OutboundPacket encode()
 	{
+		OutboundPacket block = new OutboundPacket(-1);
 		OutboundPacket packet = new OutboundPacket(81,
 				OutboundPacketHeader.SHORT);
-		OutboundPacket block = new OutboundPacket(-1);
 		packet.switchBit();
-		updatePlayerMovement(player, player, packet);
-		updateBlocks(player, player, block);
+		updatePlayerMovement(packet, player, true);
+		updatePlayer(block, player, false, true);
 		packet.writeBits(8, player.getLocalPlayers().size());
 		for (Iterator<Player> iterator = player.getLocalPlayers().iterator(); iterator
 				.hasNext();)
 		{
 			Player other = iterator.next();
 			if (Castlewood.getWorld().contains(other.getUsername())
-					&& player.getLocation().withinDistance(other.getLocation()))
+					&& other.getLocation().withinDistance(player.getLocation()))
 			{
-				updatePlayerMovement(player, other, packet);
-				updateBlocks(player, other, block);
+				updatePlayerMovement(packet, other, false);
+				if (other.isUpdateRequired())
+				{
+					updatePlayer(block, other, false, false);
+				}
 			}
 			else
 			{
@@ -54,41 +57,24 @@ public class UpdatePlayerEvent implements OutboundEvent
 				packet.writeBits(2, 3);
 			}
 		}
-		int added = 0;
 		for (Region region : player.getRegion().getSurrounding())
 		{
-			if (player.getLocalPlayers().size() >= 254)
-			{
-				continue;
-			}
-			if (added >= 10)
-			{
-				continue;
-			}
 			for (Player other : region.getPlayers())
 			{
-				if (other == player)
+				if (player.getLocalPlayers().size() > 254)
+				{
+					break;
+				}
+				if (other == player || player.getLocalPlayers().contains(other))
 				{
 					continue;
 				}
-				if (player.getLocalPlayers().contains(other))
-				{
-					continue;
-				}
-				if (player.getLocation().withinDistance(other.getLocation()))
-				{
-					added++;
-					addPlayer(player, other, packet);
-					if (!other.getMask().has(Constants.MASK_PLAYER_APPEARANCE))
-					{
-						other.addAppearanceBlock();
-					}
-					updateBlocks(player, other, block);
-					player.getLocalPlayers().add(other);
-				}
+				player.getLocalPlayers().add(other);
+				addPlayer(packet, other);
+				updatePlayer(block, other, true, false);
 			}
 		}
-		if (block.getBuffer().writerIndex() > 0)
+		if (block.getLength() > 0)
 		{
 			packet.writeBits(11, 2047);
 			packet.switchByte();
@@ -101,67 +87,32 @@ public class UpdatePlayerEvent implements OutboundEvent
 		return packet;
 	}
 
-	private static void addPlayer(Player player, Player other,
-			OutboundPacket packet)
+	public void addPlayer(OutboundPacket packet, Player other)
 	{
-		packet.writeBits(11, other.getIndex());
-		packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
+		packet.writeBits(11, other.getIndex() + 1);
 		packet.writeBits(1, 1);
-		packet.writeBits(5, other.getLocation().getY()
-				- player.getLocation().getY());
-		packet.writeBits(5, other.getLocation().getX()
-				- player.getLocation().getX());
-	}
-
-	private static void updatePlayerMovement(Player updating, Player player,
-			OutboundPacket packet)
-	{
-		if (player.<Boolean> get("teleporting") && player == updating)
+		packet.writeBits(1, 1);
+		int deltaY = other.getLocation().getY() - player.getLocation().getY();
+		int deltaX = other.getLocation().getX() - player.getLocation().getX();
+		packet.writeBits(5, deltaY);
+		packet.writeBits(5, deltaX);
+		if (!player.getMask().has(Constants.MASK_PLAYER_APPEARANCE))
 		{
-			packet.writeBits(1, 1);
-			packet.writeBits(2, 3);
-			packet.writeBits(2, player.getLocation().getHeight());
-			packet.writeBits(1, 1);
-			packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
-			packet.writeBits(7, player.getLocation().getLocalY());
-			packet.writeBits(7, player.getLocation().getLocalX());
+			player.addAppearanceBlock();
 		}
-		else if (player.movementRequired())
+		if (!other.getMask().has(Constants.MASK_PLAYER_APPEARANCE))
 		{
-			if (player.getRunningDirection() != Direction.NONE)
-			{
-				packet.writeBits(1, 1);
-				packet.writeBits(2, 2);
-				packet.writeBits(3, player.getWalkingDirection().getValue());
-				packet.writeBits(3, player.getRunningDirection().getValue());
-				packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
-			}
-			else
-			{
-				packet.writeBits(1, 1);
-				packet.writeBits(2, 1);
-				packet.writeBits(3, player.getWalkingDirection().getValue());
-				packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
-			}
-		}
-		else if (player.isUpdateRequired())
-		{
-			packet.writeBits(1, 1);
-			packet.writeBits(2, 0);
-		}
-		else
-		{
-			packet.writeBits(1, 0);
+			other.addAppearanceBlock();
 		}
 	}
 
-	private static void updateBlocks(Player updating, Player player,
-			OutboundPacket packet)
+	public void updatePlayer(OutboundPacket packet, Player other,
+			boolean force, boolean current)
 	{
-		if (player.isUpdateRequired())
+		if (other.isUpdateRequired())
 		{
-			UpdateMask mask = player.getMask().clone();
-			if (updating == player)
+			UpdateMask mask = other.getMask().clone();
+			if (current)
 			{
 				if (mask.has(Constants.MASK_PLAYER_CHAT))
 				{
@@ -179,12 +130,56 @@ public class UpdatePlayerEvent implements OutboundEvent
 			}
 			if (mask.has(Constants.MASK_PLAYER_CHAT))
 			{
-				appendChatBlock(player.getBlocks().get(ChatBlock.class), packet);
+				appendChatBlock(other.getBlocks().get(ChatBlock.class), packet);
 			}
 			if (mask.has(Constants.MASK_PLAYER_APPEARANCE))
 			{
 				appendAppearanceBlock(
-						player.getBlocks().get(AppearanceBlock.class), packet);
+						other.getBlocks().get(AppearanceBlock.class), packet);
+			}
+		}
+	}
+
+	private void updatePlayerMovement(OutboundPacket packet, Player player, boolean current)
+	{
+		if (player.<Boolean> get("teleporting") && current)
+		{
+			packet.writeBits(1, 1);
+			packet.writeBits(2, 3);
+			packet.writeBits(2, player.getLocation().getHeight());
+			packet.writeBits(1, 1);
+			packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
+			packet.writeBits(7, player.getLocation().getLocalY());
+			packet.writeBits(7, player.getLocation().getLocalX());
+		}
+		else
+		{
+			if (player.getWalkingDirection() == Direction.NONE)
+			{
+				if (player.isUpdateRequired())
+				{
+					packet.writeBits(1, 1);
+					packet.writeBits(2, 0);
+				}
+				else
+				{
+					packet.writeBits(1, 0);
+				}
+			}
+			else if (player.getRunningDirection() == Direction.NONE)
+			{
+				packet.writeBits(1, 1);
+				packet.writeBits(2, 1);
+				packet.writeBits(3, player.getWalkingDirection().getValue());
+				packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
+			}
+			else
+			{
+				packet.writeBits(1, 1);
+				packet.writeBits(2, 2);
+				packet.writeBits(3, player.getWalkingDirection().getValue());
+				packet.writeBits(3, player.getRunningDirection().getValue());
+				packet.writeBits(1, player.isUpdateRequired() ? 1 : 0);
 			}
 		}
 	}
@@ -197,7 +192,7 @@ public class UpdatePlayerEvent implements OutboundEvent
 		packet.getBuffer().writeByte(block.getMessage().length);
 		packet.getBuffer().writeBytes(block.getMessage());
 	}
-	
+
 	private static void appendAppearanceBlock(AppearanceBlock block,
 			OutboundPacket packet)
 	{

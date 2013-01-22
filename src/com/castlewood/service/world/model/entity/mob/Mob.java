@@ -52,7 +52,7 @@ public abstract class Mob extends Entity implements Processable, Updateable
 		return false;
 	}
 
-	public boolean movementRequired()
+	public boolean isMovementRequired()
 	{
 		return walk != Direction.NONE;
 	}

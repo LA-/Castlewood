@@ -1,12 +1,10 @@
 package com.castlewood.service.world;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.castlewood.Castlewood;
 import com.castlewood.Constants;
@@ -17,11 +15,13 @@ import com.castlewood.service.world.task.TaskRequest;
 public class World extends Task
 {
 
-	private Map<Integer, Player> players = new Hashtable<>();
+	private Map<Integer, Player> players = new ConcurrentHashMap<>();
 
 	private Map<String, Integer> usernameToIndex = new LinkedHashMap<>();
 
-	private List<Player> register = new ArrayList<>();
+	private LinkedList<Player> register = new LinkedList<>();
+
+	private LinkedList<Player> unregister = new LinkedList<>();
 
 	public World()
 	{
@@ -68,13 +68,12 @@ public class World extends Task
 	@Override
 	public void execute()
 	{
-		Map<Integer, Player> players = Collections
-				.unmodifiableMap(this.players);
+		int registered = 0;
 		for (Player player : players.values())
 		{
 			if (player.isDisconnected())
 			{
-				unregister(player);
+				unregister.add(player);
 				continue;
 			}
 			player.prepare();
@@ -87,11 +86,19 @@ public class World extends Task
 		{
 			player.post();
 		}
-		for (Iterator<Player> iterator = register.iterator(); iterator
-				.hasNext();)
+		Player player;
+		while ((player = register.poll()) != null)
 		{
-			register(iterator.next());
-			iterator.remove();
+			register(player);
+			registered++;
+			if (registered > 10)
+			{
+				break;
+			}
+		}
+		while ((player = unregister.poll()) != null)
+		{
+			unregister(player);
 		}
 	}
 

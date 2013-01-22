@@ -1,7 +1,6 @@
 package com.castlewood.service.world.model.entity.mob.player;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.castlewood.Castlewood;
@@ -11,12 +10,11 @@ import com.castlewood.io.file.binary.BinaryFile;
 import com.castlewood.service.net.game.event.inbound.InboundEventManager;
 import com.castlewood.service.net.game.event.outbound.OutboundEvent;
 import com.castlewood.service.net.game.event.outbound.impl.InitializeEvent;
+import com.castlewood.service.net.game.event.outbound.impl.SetInteractionOptionEvent;
 import com.castlewood.service.net.game.event.outbound.impl.SetTabInterfaceEvent;
 import com.castlewood.service.net.game.event.outbound.impl.UpdatePlayerEvent;
 import com.castlewood.service.net.game.event.outbound.impl.UpdateRegionEvent;
 import com.castlewood.service.net.game.packet.inbound.InboundPacket;
-import com.castlewood.service.world.model.entity.event.Event;
-import com.castlewood.service.world.model.entity.event.EventManager;
 import com.castlewood.service.world.model.entity.mob.AppearanceBlock;
 import com.castlewood.service.world.model.entity.mob.ChatBlock;
 import com.castlewood.service.world.model.entity.mob.Mob;
@@ -45,8 +43,6 @@ public class Player extends Mob
 
 	private List<Player> localPlayers = new ArrayList<>();
 
-	private LinkedList<Event> events = new LinkedList<>();
-
 	public Player(Client client, PlayerFile file)
 	{
 		super(file.getLocation());
@@ -74,13 +70,15 @@ public class Player extends Mob
 	@Override
 	public void register()
 	{
-		set("teleporting", true);
-		addAppearanceBlock();
-		client.send(new InitializeEvent(true, getIndex()));
+		client.send(new InitializeEvent(true, getIndex() + 1));
 		for (int i = 0; i < tabs.length; i++)
 		{
 			client.send(new SetTabInterfaceEvent(tabs[i], i));
 		}
+		client.send(new SetInteractionOptionEvent(1, false, "Follow"));
+		client.send(new SetInteractionOptionEvent(2, false, "Trade with"));
+		set("teleporting", true);
+		addAppearanceBlock();
 	}
 
 	@Override
@@ -97,11 +95,6 @@ public class Player extends Mob
 		while ((packet = client.next()) != null)
 		{
 			InboundEventManager.decode(this, packet);
-		}
-		Event event;
-		while ((event = events.poll()) != null)
-		{
-			EventManager.getHandler(event).handle(this, event);
 		}
 	}
 
@@ -138,11 +131,6 @@ public class Player extends Mob
 		set("teleporting", false);
 		resetDirections();
 		client.flush();
-	}
-
-	public void add(Event event)
-	{
-		events.add(event);
 	}
 
 	public void send(OutboundEvent event)
