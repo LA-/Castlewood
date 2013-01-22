@@ -100,4 +100,9 @@ public class World extends Task
 		return usernameToIndex.get(username) != null;
 	}
 
+	public Map<Integer, Player> getPlayers()
+	{
+		return Collections.unmodifiableMap(players);
+	}
+
 }

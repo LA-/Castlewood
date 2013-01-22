@@ -11,7 +11,7 @@ public class MovementHandler extends Location
 
 	private boolean run = false;
 
-	private boolean running = false;
+	private boolean running = true;
 
 	public MovementHandler(Location location)
 	{

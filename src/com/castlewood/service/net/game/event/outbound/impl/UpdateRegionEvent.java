@@ -18,8 +18,8 @@ public class UpdateRegionEvent implements OutboundEvent
 	public OutboundPacket encode()
 	{
 		OutboundPacket packet = new OutboundPacket(73);
-		packet.getBuffer().writeShort(location.getRegionY());
-		packet.getBuffer().writeShort(location.getRegionX());
+		packet.getBuffer().writeShort(location.getRegionX() + 6);
+		packet.getBuffer().writeShort(location.getRegionY() + 6);
 		return packet;
 	}
 

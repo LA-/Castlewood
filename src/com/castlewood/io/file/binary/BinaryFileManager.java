@@ -28,110 +28,100 @@ public class BinaryFileManager implements PlayerFileManager<BinaryFile>
 	@Override
 	public boolean checkCredentials(String username, String password)
 	{
-		BinaryFile profile;
-		if (files.containsKey(username))
+		BinaryFile profile = new BinaryFile();
+		File file = new File("./data/saves/" + username.toLowerCase() + ".sav");
+		if (!file.exists())
 		{
-			profile = files.get(username);
+			profile.setUsername(username);
+			profile.setPassword(password);
+			files.put(username, profile);
+			save(profile);
+			return true;
 		}
-		else
+		try
 		{
-			profile = new BinaryFile();
-			File file = new File("./data/saves/" + username.toLowerCase()
-					+ ".sav");
-			if (!file.exists())
+			DataInputStream stream = new DataInputStream(new FileInputStream(
+					file));
+			while (true)
 			{
-				profile.setUsername(username);
-				profile.setPassword(password);
-				files.put(username, profile);
-				save(profile);
-				return true;
-			}
-			try
-			{
-				DataInputStream stream = new DataInputStream(
-						new FileInputStream(file));
-				while (true)
+				byte opcode = stream.readByte();
+				if (opcode == 0)
 				{
-					byte opcode = stream.readByte();
-					if (opcode == 0)
-					{
-						break;
-					}
-					switch (opcode)
-					{
-					case OPCODE_USERNAME:
-						profile.setUsername(stream.readUTF());
-						break;
-					case OPCODE_PASSWORD:
-						profile.setPassword(stream.readUTF());
-						break;
-					case OPCODE_RIGHTS:
-						profile.setRights(stream.readByte());
-						break;
-					case OPCODE_LOCATION:
-						short x = -1;
-						short y = -1;
-						byte height = -1;
-						while (x == -1 || y == -1 || height == -1)
-						{
-							opcode = stream.readByte();
-							switch (opcode)
-							{
-							case 1:
-								x = stream.readShort();
-								break;
-							case 2:
-								y = stream.readShort();
-								break;
-							case 3:
-								height = stream.readByte();
-								break;
-							}
-						}
-						Location location = new Location(x, y, height);
-						profile.setLocation(location);
-						break;
-					case OPCODE_DESIGN:
-						Gender gender = null;
-						int[] style = null;
-						int[] colour = null;
-						while (gender == null || style == null
-								|| colour == null)
-						{
-							opcode = stream.readByte();
-							switch (opcode)
-							{
-							case 1:
-								gender = Gender.values()[stream.readShort()];
-								break;
-							case 2:
-								style = new int[stream.readShort()];
-								for (int i = 0; i < style.length; i++)
-								{
-									style[i] = stream.readInt();
-								}
-								break;
-							case 3:
-								colour = new int[stream.readShort()];
-								for (int i = 0; i < colour.length; i++)
-								{
-									colour[i] = stream.readInt();
-								}
-								break;
-							}
-						}
-						CharacterDesign design = new CharacterDesign(gender,
-								style, colour);
-						profile.setDesign(design);
-						break;
-					}
+					break;
 				}
+				switch (opcode)
+				{
+				case OPCODE_USERNAME:
+					profile.setUsername(stream.readUTF());
+					break;
+				case OPCODE_PASSWORD:
+					profile.setPassword(stream.readUTF());
+					break;
+				case OPCODE_RIGHTS:
+					profile.setRights(stream.readByte());
+					break;
+				case OPCODE_LOCATION:
+					short x = -1;
+					short y = -1;
+					byte height = -1;
+					while (x == -1 || y == -1 || height == -1)
+					{
+						opcode = stream.readByte();
+						switch (opcode)
+						{
+						case 1:
+							x = stream.readShort();
+							break;
+						case 2:
+							y = stream.readShort();
+							break;
+						case 3:
+							height = stream.readByte();
+							break;
+						}
+					}
+					Location location = new Location(x, y, height);
+					profile.setLocation(location);
+					break;
+				case OPCODE_DESIGN:
+					Gender gender = null;
+					int[] style = null;
+					int[] colour = null;
+					while (gender == null || style == null || colour == null)
+					{
+						opcode = stream.readByte();
+						switch (opcode)
+						{
+						case 1:
+							gender = Gender.values()[stream.readShort()];
+							break;
+						case 2:
+							style = new int[stream.readShort()];
+							for (int i = 0; i < style.length; i++)
+							{
+								style[i] = stream.readInt();
+							}
+							break;
+						case 3:
+							colour = new int[stream.readShort()];
+							for (int i = 0; i < colour.length; i++)
+							{
+								colour[i] = stream.readInt();
+							}
+							break;
+						}
+					}
+					CharacterDesign design = new CharacterDesign(gender, style,
+							colour);
+					profile.setDesign(design);
+					break;
+				}
+			}
 
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 		if (profile.getUsername().equalsIgnoreCase(username)
 				&& profile.getPassword().equalsIgnoreCase(password))
@@ -157,8 +147,8 @@ public class BinaryFileManager implements PlayerFileManager<BinaryFile>
 					continue;
 				}
 				BinaryEncode encode = method.getAnnotation(BinaryEncode.class);
-				encode.type().write(stream, encode.opcode(),
-						method.invoke(file), encode.type());
+				Binary.write(stream, encode.opcode(), method.invoke(file),
+						encode.type());
 			}
 			stream.writeByte(0);
 			stream.flush();

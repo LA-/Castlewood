@@ -85,22 +85,22 @@ public class Location implements Cloneable
 
 	public int getLocalX()
 	{
-		return x - ((getRegionX() - 6) * 8);
+		return x - (getRegionX() * 8);
 	}
 
 	public int getLocalY()
 	{
-		return y - ((getRegionY() - 6) * 8);
+		return y - (getRegionY() * 8);
 	}
 
 	public int getRegionX()
 	{
-		return x / 8;
+		return (x >> 3) - 6;
 	}
 
 	public int getRegionY()
 	{
-		return y / 8;
+		return (y >> 3) - 6;
 	}
 
 	@BinaryEncode(opcode = 1, type = Binary.SHORT)

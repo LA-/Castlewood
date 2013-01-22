@@ -197,7 +197,7 @@ public class UpdatePlayerEvent implements OutboundEvent
 		packet.getBuffer().writeByte(block.getMessage().length);
 		packet.getBuffer().writeBytes(block.getMessage());
 	}
-
+	
 	private static void appendAppearanceBlock(AppearanceBlock block,
 			OutboundPacket packet)
 	{
@@ -248,4 +248,5 @@ public class UpdatePlayerEvent implements OutboundEvent
 		packet.getBuffer().writeByte(properties.writerIndex());
 		packet.getBuffer().writeBytes(properties);
 	}
+	
 }

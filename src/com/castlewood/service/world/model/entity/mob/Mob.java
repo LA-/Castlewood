@@ -14,16 +14,13 @@ public abstract class Mob extends Entity implements Processable, Updateable
 
 	private Blocks blocks = new Blocks();
 
-	private MovementHandler movement;
-
 	private Direction walk = Direction.NONE;
 
 	private Direction run = Direction.NONE;
 
 	public Mob(Location location)
 	{
-		super(location);
-		movement = new MovementHandler(location);
+		super(new MovementHandler(location));
 	}
 
 	public abstract void register();
@@ -32,6 +29,7 @@ public abstract class Mob extends Entity implements Processable, Updateable
 
 	public void advance()
 	{
+		MovementHandler movement = (MovementHandler) getLocation();
 		walk = movement.next();
 		if (movement.forceRun() || movement.isRunning())
 		{
@@ -41,11 +39,17 @@ public abstract class Mob extends Entity implements Processable, Updateable
 
 	public boolean hasRegionChanged()
 	{
-		return getRegion() == null
-				|| getLocation().getRegionX() != getRegion().getLocation()
-						.getX()
-				|| getLocation().getRegionY() != getRegion().getLocation()
-						.getY();
+		if (getRegion() == null)
+		{
+			return true;
+		}
+		int deltaX = Math.abs(getLocation().getRegionX() - getRegion().getLocation().getX());
+		int deltaY = Math.abs(getLocation().getRegionY() - getRegion().getLocation().getY());
+		if (deltaX >= 4 || deltaY >= 4)
+		{
+			return true;
+		}
+		return false;
 	}
 
 	public boolean movementRequired()
@@ -77,11 +81,6 @@ public abstract class Mob extends Entity implements Processable, Updateable
 	public Blocks getBlocks()
 	{
 		return blocks;
-	}
-
-	public MovementHandler getMovement()
-	{
-		return movement;
 	}
 
 	public Direction getWalkingDirection()

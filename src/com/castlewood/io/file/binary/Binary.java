@@ -30,7 +30,7 @@ public enum Binary
 
 	ENUM;
 
-	public void write(DataOutputStream stream, int opcode, Object value,
+	public static void write(DataOutputStream stream, int opcode, Object value,
 			Binary type) throws IOException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException
 	{
@@ -59,7 +59,7 @@ public enum Binary
 			stream.writeUTF((String) value);
 			break;
 		case OBJECT:
-			for (Method method : value.getClass().getDeclaredMethods())
+			for (Method method : value.getClass().getMethods())
 			{
 				if (!method.isAnnotationPresent(BinaryEncode.class))
 				{

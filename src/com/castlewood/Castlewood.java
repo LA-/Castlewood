@@ -14,6 +14,7 @@ import com.castlewood.service.net.game.packet.inbound.InboundPacketService;
 import com.castlewood.service.net.jaggrab.JaggrabService;
 import com.castlewood.service.world.World;
 import com.castlewood.service.world.WorldService;
+import com.castlewood.service.world.model.entity.mob.player.Player;
 import com.castlewood.service.world.task.TaskRequest;
 
 public class Castlewood
@@ -27,6 +28,19 @@ public class Castlewood
 
 	public static void main(String... args)
 	{
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+
+			@Override
+			public void run()
+			{
+				for (Player player : world.getPlayers().values())
+				{
+					files.save(new BinaryFile(player));
+				}
+			}
+
+		});
 		FileStore.open(new File(Constants.CACHE_PATH));
 		manager.register(JaggrabService.class, new JaggrabService());
 		manager.register(HandshakeService.class, new HandshakeService());
