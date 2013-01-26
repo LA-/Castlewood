@@ -2,10 +2,10 @@ package com.castlewood;
 
 import java.io.File;
 
-import com.castlewood.io.file.PlayerFileManager;
-import com.castlewood.io.file.binary.BinaryFile;
-import com.castlewood.io.file.binary.BinaryFileManager;
 import com.castlewood.io.fs.FileStore;
+import com.castlewood.io.player.PlayerFileManager;
+import com.castlewood.io.player.binary.BinaryFile;
+import com.castlewood.io.player.binary.BinaryFileManager;
 import com.castlewood.service.net.ServiceManager;
 import com.castlewood.service.net.game.handshake.HandshakeService;
 import com.castlewood.service.net.game.login.LoginService;

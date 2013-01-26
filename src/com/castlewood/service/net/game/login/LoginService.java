@@ -5,7 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.castlewood.Castlewood;
 import com.castlewood.Constants;
-import com.castlewood.io.file.PlayerFile;
+import com.castlewood.io.player.PlayerFile;
 import com.castlewood.service.net.ChannelRequest;
 import com.castlewood.service.net.Service;
 import com.castlewood.service.net.game.packet.inbound.InboundPacketDecoder;

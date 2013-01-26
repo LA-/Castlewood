@@ -1,4 +1,4 @@
-package com.castlewood.io.file.binary;
+package com.castlewood.io.player.binary;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,8 +11,8 @@ import java.lang.reflect.Method;
 import java.util.Hashtable;
 import java.util.Map;
 
-import com.castlewood.io.file.PlayerFileManager;
-import com.castlewood.io.file.binary.annotation.BinaryEncode;
+import com.castlewood.io.player.PlayerFileManager;
+import com.castlewood.io.player.binary.annotation.BinaryEncode;
 import com.castlewood.service.world.model.entity.Location;
 import com.castlewood.service.world.model.entity.mob.player.CharacterDesign;
 import com.castlewood.service.world.model.entity.mob.player.Gender;
@@ -27,19 +27,9 @@ public class BinaryFileManager implements PlayerFileManager<BinaryFile>
 
 	private static Map<String, BinaryFile> files = new Hashtable<>();
 
-	@Override
-	public boolean checkCredentials(String username, String password)
+	public BinaryFile load(File file)
 	{
 		BinaryFile profile = new BinaryFile();
-		File file = new File("./data/saves/" + username.toLowerCase() + ".sav");
-		if (!file.exists())
-		{
-			profile.setUsername(username);
-			profile.setPassword(password);
-			files.put(username, profile);
-			save(profile);
-			return true;
-		}
 		try
 		{
 			DataInputStream stream = new DataInputStream(new FileInputStream(
@@ -144,12 +134,29 @@ public class BinaryFileManager implements PlayerFileManager<BinaryFile>
 					break;
 				}
 			}
-
+			return profile;
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
+		return null;
+	}
+
+	@Override
+	public boolean checkCredentials(String username, String password)
+	{
+		BinaryFile profile = new BinaryFile();
+		File file = new File("./data/saves/" + username.toLowerCase() + ".sav");
+		if (!file.exists())
+		{
+			profile.setUsername(username);
+			profile.setPassword(password);
+			files.put(username, profile);
+			save(profile);
+			return true;
+		}
+		profile = load(file);
 		if (profile.getUsername().equalsIgnoreCase(username)
 				&& profile.getPassword().equalsIgnoreCase(password))
 		{

@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.castlewood.Castlewood;
 import com.castlewood.Constants;
-import com.castlewood.io.file.PlayerFile;
-import com.castlewood.io.file.binary.BinaryFile;
+import com.castlewood.io.player.PlayerFile;
+import com.castlewood.io.player.binary.BinaryFile;
 import com.castlewood.service.net.game.event.inbound.InboundEventManager;
 import com.castlewood.service.net.game.event.outbound.OutboundEvent;
 import com.castlewood.service.net.game.event.outbound.impl.InitializeEvent;

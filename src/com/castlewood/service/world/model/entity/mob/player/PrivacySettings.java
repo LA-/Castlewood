@@ -1,7 +1,7 @@
 package com.castlewood.service.world.model.entity.mob.player;
 
-import com.castlewood.io.file.binary.Binary;
-import com.castlewood.io.file.binary.annotation.BinaryEncode;
+import com.castlewood.io.player.binary.Binary;
+import com.castlewood.io.player.binary.annotation.BinaryEncode;
 
 public class PrivacySettings
 {

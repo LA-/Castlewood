@@ -1,4 +1,4 @@
-package com.castlewood.io.file;
+package com.castlewood.io.player;
 
 public interface PlayerFileManager<F extends PlayerFile>
 {

@@ -70,7 +70,15 @@ public class UpdatePlayerEvent implements OutboundEvent
 					continue;
 				}
 				player.getLocalPlayers().add(other);
-				addPlayer(packet, other);
+				addPlayer(packet, other, player);
+				if (!player.getMask().has(Constants.MASK_PLAYER_APPEARANCE))
+				{
+					player.addAppearanceBlock();
+				}
+				if (!other.getMask().has(Constants.MASK_PLAYER_APPEARANCE))
+				{
+					other.addAppearanceBlock();
+				}
 				updatePlayer(block, other, true, false);
 			}
 		}
@@ -87,7 +95,7 @@ public class UpdatePlayerEvent implements OutboundEvent
 		return packet;
 	}
 
-	public void addPlayer(OutboundPacket packet, Player other)
+	private static void addPlayer(OutboundPacket packet, Player other, Player player)
 	{
 		packet.writeBits(11, other.getIndex() + 1);
 		packet.writeBits(1, 1);
@@ -96,17 +104,9 @@ public class UpdatePlayerEvent implements OutboundEvent
 		int deltaX = other.getLocation().getX() - player.getLocation().getX();
 		packet.writeBits(5, deltaY);
 		packet.writeBits(5, deltaX);
-		if (!player.getMask().has(Constants.MASK_PLAYER_APPEARANCE))
-		{
-			player.addAppearanceBlock();
-		}
-		if (!other.getMask().has(Constants.MASK_PLAYER_APPEARANCE))
-		{
-			other.addAppearanceBlock();
-		}
 	}
 
-	public void updatePlayer(OutboundPacket packet, Player other,
+	private static void updatePlayer(OutboundPacket packet, Player other,
 			boolean force, boolean current)
 	{
 		if (other.isUpdateRequired())
@@ -140,7 +140,8 @@ public class UpdatePlayerEvent implements OutboundEvent
 		}
 	}
 
-	private void updatePlayerMovement(OutboundPacket packet, Player player, boolean current)
+	private static void updatePlayerMovement(OutboundPacket packet, Player player,
+			boolean current)
 	{
 		if (player.<Boolean> get("teleporting") && current)
 		{
@@ -243,5 +244,5 @@ public class UpdatePlayerEvent implements OutboundEvent
 		packet.getBuffer().writeByte(properties.writerIndex());
 		packet.getBuffer().writeBytes(properties);
 	}
-	
+
 }

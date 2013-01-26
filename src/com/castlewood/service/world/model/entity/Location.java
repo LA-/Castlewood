@@ -1,7 +1,7 @@
 package com.castlewood.service.world.model.entity;
 
-import com.castlewood.io.file.binary.Binary;
-import com.castlewood.io.file.binary.annotation.BinaryEncode;
+import com.castlewood.io.player.binary.Binary;
+import com.castlewood.io.player.binary.annotation.BinaryEncode;
 import com.castlewood.service.world.model.entity.mob.Direction;
 
 public class Location implements Cloneable
@@ -73,7 +73,7 @@ public class Location implements Cloneable
 
 	public boolean withinDistance(Location location)
 	{
-		return withinDistance(location, 8);
+		return withinDistance(location, 16);
 	}
 
 	public boolean withinDistance(Location location, int distance)

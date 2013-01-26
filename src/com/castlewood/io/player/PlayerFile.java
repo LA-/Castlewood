@@ -1,4 +1,4 @@
-package com.castlewood.io.file;
+package com.castlewood.io.player;
 
 import com.castlewood.service.world.model.entity.Location;
 import com.castlewood.service.world.model.entity.mob.player.CharacterDesign;

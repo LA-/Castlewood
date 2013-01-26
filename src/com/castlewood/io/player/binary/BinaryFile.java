@@ -1,7 +1,7 @@
-package com.castlewood.io.file.binary;
+package com.castlewood.io.player.binary;
 
-import com.castlewood.io.file.PlayerFile;
-import com.castlewood.io.file.binary.annotation.BinaryEncode;
+import com.castlewood.io.player.PlayerFile;
+import com.castlewood.io.player.binary.annotation.BinaryEncode;
 import com.castlewood.service.world.model.entity.Location;
 import com.castlewood.service.world.model.entity.mob.player.CharacterDesign;
 import com.castlewood.service.world.model.entity.mob.player.Gender;
@@ -114,6 +114,12 @@ public class BinaryFile implements PlayerFile
 	public PrivacySettings getSettings()
 	{
 		return settings;
+	}
+
+	@Override
+	public String toString()
+	{
+		return username + ".sav";
 	}
 
 }

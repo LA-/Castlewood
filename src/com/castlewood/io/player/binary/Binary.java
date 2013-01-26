@@ -1,11 +1,11 @@
-package com.castlewood.io.file.binary;
+package com.castlewood.io.player.binary;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.castlewood.io.file.binary.annotation.BinaryEncode;
+import com.castlewood.io.player.binary.annotation.BinaryEncode;
 
 public enum Binary
 {
